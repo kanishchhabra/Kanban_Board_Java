@@ -7,12 +7,13 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class KanbanLauncher extends Application {
+    public static User loggedUser = new User("","","","");
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
+        FXMLLoader fxmlLoader = new FXMLLoader(KanbanLauncher.class.getResource("user-login-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 225, 480);
+        stage.setTitle("Register");
         stage.setScene(scene);
         stage.show();
     }

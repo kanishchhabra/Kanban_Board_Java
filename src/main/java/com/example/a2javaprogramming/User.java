@@ -5,13 +5,30 @@ public class User {
     private String firstName;
     private String lastName;
     private String password;
-    private String salt; //used to retrieve the password
 
-    public User(String username, String firstName, String lastName, String password, String salt){
+    public User(String username, String firstName, String lastName, String password){
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.password = password;
-        this.salt = salt;
+    }
+
+    //Setters
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    public String toString(){
+        return String.format("Name: %s\nUsername: %s\n", this.firstName + " " + this.lastName, this.username);
     }
 }
