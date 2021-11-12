@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<Accordion xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <panes>
+      <TitledPane animated="false" text="untitled 1">
+         <content>
+            <VBox prefHeight="283.0" prefWidth="196.0" spacing="5.0">
+               <children>
+                  <Label text="Label" />
+                  <TextArea prefHeight="14.0" prefWidth="192.0" />
+                  <Label text="Due Date" />
+                  <DatePicker prefHeight="25.0" prefWidth="238.0" />
+                  <Label text="Status" />
+                  <TextField editable="false" />
+                  <Label text="Progress" />
+                  <ProgressBar prefHeight="18.0" prefWidth="261.0" progress="0.0" />
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Hyperlink text="View List" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Hyperlink text="Delete" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Hyperlink text="Save" />
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="1.5" left="1.5" right="1.5" top="1.5" />
+               </padding>
+            </VBox>
+         </content>
+      </TitledPane>
+   </panes>
+</Accordion>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="newColumnContainer" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.a2javaprogramming.ColumnController">
+   <children>
+      <HBox fx:id="columnHeading" alignment="CENTER">
+         <children>
+            <Label prefHeight="17.0" prefWidth="141.0" text="Label" HBox.hgrow="ALWAYS" />
+            <SplitMenuButton fx:id="addTask" mnemonicParsing="false" onAction="#onAddTask" text="Add">
+              <items>
+                <MenuItem fx:id="deleteColumn" mnemonicParsing="false" onAction="#onDeleteColumn" text="Delete" />
+                  <MenuItem fx:id="renameColumn" mnemonicParsing="false" onAction="#onRenameColumn" text="Rename" />
+              </items>
+            </SplitMenuButton>
+         </children>
+         <padding>
+            <Insets bottom="1.5" left="1.5" right="1.5" top="1.5" />
+         </padding>
+      </HBox>
+   </children>
+</VBox>
