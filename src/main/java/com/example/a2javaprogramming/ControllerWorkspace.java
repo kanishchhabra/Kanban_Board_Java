@@ -86,101 +86,6 @@ public class ControllerWorkspace {
     @FXML
     private TextArea renameStatusArea;
 
-    //Rename Project View Functions
-    @FXML
-    void onCloseRenameProject(ActionEvent event) {
-        StackPane stackPane = (StackPane) renameProjectWindow.getParent();
-        stackPane.getChildren().remove(renameProjectWindow);
-        BorderPane borderPane =(BorderPane) stackPane.getChildren().get(0);
-        borderPane.setDisable(false);
-    }
-
-    @FXML
-    void onUpdateProject(ActionEvent event) {
-        StackPane stackPane = (StackPane) renameProjectWindow.getParent();
-        BorderPane borderPaneArea = (BorderPane) stackPane.getChildren().get(0);
-        TabPane tabArea = (TabPane) borderPaneArea.getCenter();
-        Tab tab = tabArea.getSelectionModel().getSelectedItem();
-        Connection conn = getConnection();
-        try{
-            String sql = "UPDATE Projects SET projectName = ? WHERE projectId = ?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, projectNewName.getText());
-            pstmt.setInt(2, Integer.valueOf(tab.getId()));
-            pstmt.executeUpdate();
-
-            //Creates new project window on the GUI
-            tab.setText(projectNewName.getText());
-
-            //Updating GUI
-            stackPane.getChildren().remove(createProjectWindow);
-            borderPaneArea.setDisable(false);
-            stackPane.getChildren().remove(renameProjectWindow);
-
-            conn.close();
-
-
-
-        }  catch (Exception e){
-            renameStatusArea.setVisible(true);
-            renameStatusArea.setText(e.getClass().getName() + ": " + e.getMessage());
-            renameStatusArea.setWrapText(true);
-            renameStatusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
-        }
-    }
-
-    //Create Project View Functions
-
-    void onCreateProject(ActionEvent event) {
-        Connection conn = getConnection();
-        //Following code creates adds a new project to DB. Displays the errors in the status area
-        try{
-            String sql = "INSERT INTO Projects (projectName, username) VALUES (?, (SELECT username FROM Users WHERE  username = ? ))";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, projectName.getText());
-            pstmt.setString(2, KanbanLauncher.loggedUser.getUsername());
-            pstmt.executeUpdate();
-
-            statusArea.setText("Project Created");
-            statusArea.setWrapText(true);
-            statusArea.setBackground(new Background(new BackgroundFill(Color.GREEN,null,null)));
-
-
-            //Creates new project window on the GUI
-            Tab newProject = FXMLLoader.load(getClass().getResource("project-view.fxml"));
-            newProject.setText(projectName.getText());
-
-            //Moving up the hierarchy to add new tab
-            StackPane stackPane = (StackPane) createProjectWindow.getParent();
-            stackPane.getChildren().remove(createProjectWindow);
-            BorderPane borderPane =(BorderPane) stackPane.getChildren().get(0);
-            borderPane.setDisable(false);
-            BorderPane borderPaneArea = (BorderPane) stackPane.getChildren().get(0);
-            TabPane tabArea = (TabPane) borderPaneArea.getCenter();
-
-            //Showing new project on GUI
-            tabArea.getTabs().add(newProject);
-            conn.close();
-
-
-
-        }  catch (Exception e){
-            statusArea.setVisible(true);
-            statusArea.setText(e.getClass().getName() + ": " + e.getMessage());
-            statusArea.setWrapText(true);
-            statusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
-        }
-
-    }
-
-    @FXML
-    void onCloseAddProject(ActionEvent event) {
-        StackPane stackPane = (StackPane) createProjectWindow.getParent();
-        stackPane.getChildren().remove(createProjectWindow);
-        BorderPane borderPane =(BorderPane) stackPane.getChildren().get(0);
-        borderPane.setDisable(false);
-    }
-
     // Workspace View Functions
     @FXML
     void onRenameProject(ActionEvent event) throws Exception {
@@ -252,5 +157,103 @@ public class ControllerWorkspace {
         }
         return conn;
     }
+
+    //Rename Project View Functions
+    @FXML
+    void onCloseRenameProject(ActionEvent event) {
+        StackPane stackPane = (StackPane) renameProjectWindow.getParent();
+        stackPane.getChildren().remove(renameProjectWindow);
+        BorderPane borderPane =(BorderPane) stackPane.getChildren().get(0);
+        borderPane.setDisable(false);
+    }
+
+    @FXML
+    void onUpdateProject(ActionEvent event) {
+        StackPane stackPane = (StackPane) renameProjectWindow.getParent();
+        BorderPane borderPaneArea = (BorderPane) stackPane.getChildren().get(0);
+        TabPane tabArea = (TabPane) borderPaneArea.getCenter();
+        Tab tab = tabArea.getSelectionModel().getSelectedItem();
+        Connection conn = getConnection();
+        try{
+            String sql = "UPDATE Projects SET projectName = ? WHERE projectId = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, projectNewName.getText());
+            pstmt.setInt(2, Integer.valueOf(tab.getId()));
+            pstmt.executeUpdate();
+
+            //Creates new project window on the GUI
+            tab.setText(projectNewName.getText());
+
+            //Updating GUI
+            stackPane.getChildren().remove(createProjectWindow);
+            borderPaneArea.setDisable(false);
+            stackPane.getChildren().remove(renameProjectWindow);
+
+            conn.close();
+
+
+
+        }  catch (Exception e){
+            renameStatusArea.setVisible(true);
+            renameStatusArea.setText(e.getClass().getName() + ": " + e.getMessage());
+            renameStatusArea.setWrapText(true);
+            renameStatusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
+        }
+    }
+
+    //Create Project View Functions
+
+    @FXML
+    void onCreateProject(ActionEvent event) {
+        Connection conn = getConnection();
+        //Following code creates adds a new project to DB. Displays the errors in the status area
+        try{
+            String sql = "INSERT INTO Projects (projectName, username) VALUES (?, (SELECT username FROM Users WHERE  username = ? ))";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, projectName.getText());
+            pstmt.setString(2, KanbanLauncher.loggedUser.getUsername());
+            pstmt.executeUpdate();
+
+            statusArea.setText("Project Created");
+            statusArea.setWrapText(true);
+            statusArea.setBackground(new Background(new BackgroundFill(Color.GREEN,null,null)));
+
+
+            //Creates new project window on the GUI
+            Tab newProject = FXMLLoader.load(getClass().getResource("project-view.fxml"));
+            newProject.setText(projectName.getText());
+
+            //Moving up the hierarchy to add new tab
+            StackPane stackPane = (StackPane) createProjectWindow.getParent();
+            stackPane.getChildren().remove(createProjectWindow);
+            BorderPane borderPane =(BorderPane) stackPane.getChildren().get(0);
+            borderPane.setDisable(false);
+            BorderPane borderPaneArea = (BorderPane) stackPane.getChildren().get(0);
+            TabPane tabArea = (TabPane) borderPaneArea.getCenter();
+
+            //Showing new project on GUI
+            tabArea.getTabs().add(newProject);
+            conn.close();
+
+
+
+        }  catch (Exception e){
+            statusArea.setVisible(true);
+            statusArea.setText(e.getClass().getName() + ": " + e.getMessage());
+            statusArea.setWrapText(true);
+            statusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
+        }
+
+    }
+
+    @FXML
+    void onCloseAddProject(ActionEvent event) {
+        StackPane stackPane = (StackPane) createProjectWindow.getParent();
+        stackPane.getChildren().remove(createProjectWindow);
+        BorderPane borderPane =(BorderPane) stackPane.getChildren().get(0);
+        borderPane.setDisable(false);
+    }
+
+    //////////////////////////
 }
 
