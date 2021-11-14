@@ -27,6 +27,23 @@ public class User {
         this.username = username;
     }
 
+    //Getters
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
     @Override
     public String toString(){
         return String.format("Name: %s\nUsername: %s\n", this.firstName + " " + this.lastName, this.username);

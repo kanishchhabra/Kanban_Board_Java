@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.HBox?>
 
-<Tab fx:id="newProjectTab" text="New Project" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.a2javaprogramming.WorkspaceController">
+<Tab text="New Project" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.a2javaprogramming.ControllerWorkspace">
    <content>
       <ScrollPane fx:id="columnsScrollPane" prefHeight="320.0" prefWidth="600.0">
          <content>

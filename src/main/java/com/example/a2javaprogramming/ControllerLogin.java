@@ -7,12 +7,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.sql.*;
 
-public class LoginController {
+public class ControllerLogin {
 
     @FXML
     private TextField username;
@@ -84,6 +86,40 @@ public class LoginController {
                     statusArea.setText("Login Successful");
                     statusArea.setWrapText(true);
                     statusArea.setBackground(new Background(new BackgroundFill(Color.GREEN,null,null)));
+
+                    StackPane stackPane = FXMLLoader.load(getClass().getResource("workspace-view.fxml"));
+                    BorderPane borderPane = (BorderPane)stackPane.getChildren().get(0);
+                    TabPane tabPane = (TabPane)borderPane.getCenter();
+
+
+                    sql = "SELECT * FROM Projects WHERE  username = ?";
+                    pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, uName);
+                    ResultSet projects = pstmt.executeQuery();
+
+
+                    while (projects.next()){
+                        KanbanLauncher.projects.add(new Project(projects.getInt("projectId"), projects.getString("projectName"), projects.getString("username")));
+                    }
+
+                    for (Project project:
+                        KanbanLauncher.projects) {
+                        Tab newProject = FXMLLoader.load(getClass().getResource("project-view.fxml"));
+                        newProject.setText(project.getProjectName());
+                        newProject.setId(Integer.toString(project.getProjectID()));
+                        KanbanLauncher.projectTabs.add(newProject);
+                        tabPane.getTabs().add(newProject);
+                    }
+                    Scene scene = new Scene(stackPane, 720, 420);
+                    // get a handle to the stage
+                    Stage stage = (Stage) signUp.getScene().getWindow();
+                    // do what you have to do
+                    stage.setTitle("Work Space");
+                    stage.setScene(scene);
+                    stage.show();
+                    conn.close();
+
+
                 }else {
                     statusArea.setText("Invalid Credentials");
                     statusArea.setWrapText(true);
@@ -91,6 +127,7 @@ public class LoginController {
                 }
 
             }  catch (Exception e){
+                System.out.println(e);
                 statusArea.setText(e.getClass().getName() + ": " + e.getMessage());
                 statusArea.setWrapText(true);
                 statusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));

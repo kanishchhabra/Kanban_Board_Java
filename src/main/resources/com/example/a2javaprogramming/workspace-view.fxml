@@ -11,49 +11,55 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="499.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.a2javaprogramming.WorkspaceController">
-   <top>
-      <VBox prefHeight="26.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-         <children>
-            <MenuBar>
-              <menus>
-                <Menu fx:id="workspaceMenu" mnemonicParsing="false" text="Workspace">
-                  <items>
-                    <MenuItem fx:id="newProject" mnemonicParsing="false" onAction="#onNewProject" text="New Project" />
-                  </items>
-                </Menu>
-                <Menu fx:id="projectMenu" mnemonicParsing="false" text="Project">
-                  <items>
-                    <MenuItem fx:id="newColumn" mnemonicParsing="false" onAction="#onNewColumn" text="New Column" />
-                        <MenuItem mnemonicParsing="false" text="New Column" />
-                  </items>
-                </Menu>
-              </menus>
-            </MenuBar>
-            <HBox prefHeight="25.0" prefWidth="600.0">
+
+<StackPane fx:id="workspaceStackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.a2javaprogramming.ControllerWorkspace">
+   <children>
+      <BorderPane fx:id="workSpaceArea" prefHeight="499.0" prefWidth="600.0">
+         <top>
+            <VBox prefHeight="26.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                <children>
-                  <TextArea editable="false" prefHeight="37.0" prefWidth="403.0" HBox.hgrow="ALWAYS" />
-                  <HBox alignment="CENTER" prefHeight="38.0" prefWidth="247.0">
+                  <MenuBar>
+                     <menus>
+                        <Menu fx:id="workspaceMenu" mnemonicParsing="false" text="Workspace">
+                           <items>
+                              <MenuItem fx:id="newProject" mnemonicParsing="false" onAction="#onNewProject" text="New Project" />
+                           </items>
+                        </Menu>
+                        <Menu fx:id="projectMenu" mnemonicParsing="false" text="Project">
+                           <items>
+                              <MenuItem fx:id="newColumn" mnemonicParsing="false" onAction="#onNewColumn" text="New Column" />
+                              <MenuItem mnemonicParsing="false" text="New Column" />
+                           </items>
+                        </Menu>
+                     </menus>
+                  </MenuBar>
+                  <HBox prefHeight="25.0" prefWidth="600.0">
                      <children>
-                        <Region prefHeight="37.0" prefWidth="39.0" />
-                        <Label text="Label" />
-                        <Region HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" text="Button" />
-                        <Region HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" prefWidth="52.0" text="Button" />
+                        <TextArea editable="false" prefHeight="37.0" prefWidth="403.0" HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER" prefHeight="38.0" prefWidth="247.0">
+                           <children>
+                              <Region prefHeight="37.0" prefWidth="39.0" />
+                              <Label text="Label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Button mnemonicParsing="false" text="Button" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Button mnemonicParsing="false" prefWidth="52.0" text="Button" />
+                           </children>
+                        </HBox>
                      </children>
+                     <padding>
+                        <Insets bottom="1.5" left="1.5" right="1.5" top="1.5" />
+                     </padding>
                   </HBox>
                </children>
-               <padding>
-                  <Insets bottom="1.5" left="1.5" right="1.5" top="1.5" />
-               </padding>
-            </HBox>
-         </children>
-      </VBox>
-   </top>
-   <center>
-      <TabPane fx:id="workspaceTabArea" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
-   </center>
-</BorderPane>
+            </VBox>
+         </top>
+         <center>
+            <TabPane fx:id="workspaceTabArea" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
+         </center>
+      </BorderPane>
+   </children>
+</StackPane>

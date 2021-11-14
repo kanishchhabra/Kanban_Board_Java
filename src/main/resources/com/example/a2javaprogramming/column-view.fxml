@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="newColumnContainer" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.a2javaprogramming.ColumnController">
+<VBox fx:id="newColumnContainer" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.a2javaprogramming.ControllerColumn">
    <children>
       <HBox fx:id="columnHeading" alignment="CENTER">
          <children>
@@ -23,5 +23,6 @@
             <Insets bottom="1.5" left="1.5" right="1.5" top="1.5" />
          </padding>
       </HBox>
+      <VBox fx:id="tasksContainer" />
    </children>
 </VBox>

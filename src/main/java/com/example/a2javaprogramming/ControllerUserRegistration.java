@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
 import java.sql.*;
 import javafx.stage.Stage;
 
-public class UserRegistrationController {
+public class ControllerUserRegistration {
 
     @FXML
     private VBox userRegistration;
@@ -65,6 +65,7 @@ public class UserRegistrationController {
             statusArea.setText("Sign Up Successful. Please Login");
             statusArea.setWrapText(true);
             statusArea.setBackground(new Background(new BackgroundFill(Color.GREEN,null,null)));
+            conn.close();
 
         }  catch (Exception e){
             statusArea.setText(e.getClass().getName() + ": " + e.getMessage());

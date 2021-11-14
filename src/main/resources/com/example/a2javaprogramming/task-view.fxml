@@ -13,27 +13,27 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<Accordion xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+<Accordion fx:id="newTask" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.a2javaprogramming.ControllerTask">
    <panes>
-      <TitledPane animated="false" text="untitled 1">
+      <TitledPane fx:id="taskPane" animated="false" text="TaskName">
          <content>
             <VBox prefHeight="283.0" prefWidth="196.0" spacing="5.0">
                <children>
-                  <Label text="Label" />
-                  <TextArea prefHeight="14.0" prefWidth="192.0" />
+                  <Label text="Description" />
+                  <TextArea fx:id="taskDescription" prefHeight="14.0" prefWidth="192.0" wrapText="true" />
                   <Label text="Due Date" />
-                  <DatePicker prefHeight="25.0" prefWidth="238.0" />
+                  <DatePicker fx:id="dueDate" prefHeight="25.0" prefWidth="238.0" />
                   <Label text="Status" />
-                  <TextField editable="false" />
+                  <TextField fx:id="taskStatus" editable="false" />
                   <Label text="Progress" />
-                  <ProgressBar prefHeight="18.0" prefWidth="261.0" progress="0.0" />
+                  <ProgressBar fx:id="taskProgress" prefHeight="18.0" prefWidth="261.0" progress="0.0" />
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Hyperlink text="View List" />
+                        <Hyperlink fx:id="viewTaskList" onAction="#onViewTaskList" text="View List" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Hyperlink text="Delete" />
+                        <Hyperlink fx:id="columnDelete" onAction="#onColumnDelete" text="Delete" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Hyperlink text="Save" />
+                        <Hyperlink fx:id="saveTask" onAction="#onSaveTask" text="Save" />
                      </children>
                   </HBox>
                </children>

@@ -9,7 +9,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Accordion;
 
-public class ColumnController {
+
+public class ControllerColumn {
 
     @FXML
     private VBox newColumnContainer;
@@ -27,14 +28,17 @@ public class ColumnController {
     private MenuItem renameColumn;
 
     @FXML
+    private VBox tasksContainer;
+
+    @FXML
     void onAddTask(ActionEvent event) throws Exception {
-        Accordion newColumn = FXMLLoader.load(getClass().getResource("task-view.fxml"));
-        newColumnContainer.getChildren().add(newColumn);
+        Accordion newTask = FXMLLoader.load(getClass().getResource("task-view.fxml"));
+        tasksContainer.getChildren().add(newTask);
     }
 
     @FXML
     void onDeleteColumn(ActionEvent event) {
-        newColumnContainer.setVisible(false);
+        newColumnContainer.getChildren().removeAll(newColumnContainer.getChildren());
     }
 
     @FXML
