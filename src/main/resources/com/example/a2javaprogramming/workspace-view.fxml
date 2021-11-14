@@ -31,23 +31,27 @@
                         <Menu fx:id="projectMenu" mnemonicParsing="false" text="Project">
                            <items>
                               <MenuItem fx:id="newColumn" mnemonicParsing="false" onAction="#onNewColumn" text="New Column" />
-                              <MenuItem mnemonicParsing="false" text="New Column" />
+                              <MenuItem fx:id="deleteProject" mnemonicParsing="false" onAction="#onDeleteProject" text="Delete Project" />
+                              <MenuItem fx:id="renameProject" mnemonicParsing="false" onAction="#onRenameProject" text="Rename Projet" />
                            </items>
                         </Menu>
                      </menus>
                   </MenuBar>
-                  <HBox prefHeight="25.0" prefWidth="600.0">
+                  <HBox>
                      <children>
-                        <TextArea editable="false" prefHeight="37.0" prefWidth="403.0" HBox.hgrow="ALWAYS" />
-                        <HBox alignment="CENTER" prefHeight="38.0" prefWidth="247.0">
+                        <TextArea editable="false" prefHeight="37.0" prefWidth="338.0" HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER" prefHeight="38.0" prefWidth="290.0">
                            <children>
                               <Region prefHeight="37.0" prefWidth="39.0" />
-                              <Label text="Label" />
+                              <Label fx:id="userFirstName" text="Label" />
                               <Region HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" text="Button" />
+                              <Button mnemonicParsing="false" text="Account" />
                               <Region HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" prefWidth="52.0" text="Button" />
+                              <Button mnemonicParsing="false" text="Log Out" />
                            </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
                         </HBox>
                      </children>
                      <padding>
@@ -60,6 +64,9 @@
          <center>
             <TabPane fx:id="workspaceTabArea" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
          </center>
+         <bottom>
+            <TextArea fx:id="projectStatusArea" editable="false" prefHeight="0.0" prefWidth="0.0" visible="false" BorderPane.alignment="CENTER" />
+         </bottom>
       </BorderPane>
    </children>
 </StackPane>

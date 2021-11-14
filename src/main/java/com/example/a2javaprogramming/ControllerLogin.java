@@ -5,10 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -89,7 +86,15 @@ public class ControllerLogin {
 
                     StackPane stackPane = FXMLLoader.load(getClass().getResource("workspace-view.fxml"));
                     BorderPane borderPane = (BorderPane)stackPane.getChildren().get(0);
+
+                    VBox topBarContainer = (VBox) borderPane.getTop();
+                    HBox topBar = (HBox) topBarContainer.getChildren().get(1);
+                    HBox infoBar = (HBox) topBar.getChildren().get(1);
+                    Label firstName = (Label) infoBar.getChildren().get(1);
+                    firstName.setText(KanbanLauncher.loggedUser.getFirstName());
+
                     TabPane tabPane = (TabPane)borderPane.getCenter();
+
 
 
                     sql = "SELECT * FROM Projects WHERE  username = ?";
@@ -107,7 +112,6 @@ public class ControllerLogin {
                         Tab newProject = FXMLLoader.load(getClass().getResource("project-view.fxml"));
                         newProject.setText(project.getProjectName());
                         newProject.setId(Integer.toString(project.getProjectID()));
-                        KanbanLauncher.projectTabs.add(newProject);
                         tabPane.getTabs().add(newProject);
                     }
                     Scene scene = new Scene(stackPane, 720, 420);
