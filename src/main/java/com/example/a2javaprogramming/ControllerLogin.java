@@ -86,6 +86,8 @@ public class ControllerLogin {
 
                     StackPane stackPane = FXMLLoader.load(getClass().getResource("workspace-view.fxml"));
                     BorderPane borderPane = (BorderPane)stackPane.getChildren().get(0);
+                    KanbanLauncher.workspaceBorderPane = borderPane;
+                    KanbanLauncher.workspaceStackPane = (StackPane) borderPane.getParent();
 
                     VBox topBarContainer = (VBox) borderPane.getTop();
                     HBox topBar = (HBox) topBarContainer.getChildren().get(1);

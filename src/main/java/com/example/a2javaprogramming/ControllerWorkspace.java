@@ -105,17 +105,13 @@ public class ControllerWorkspace {
 
     @FXML
     void onNewColumn(ActionEvent event) throws Exception {
-        if (!workspaceTabArea.getTabs().isEmpty()) {
-            VBox newColumn = FXMLLoader.load(getClass().getResource("column-view.fxml"));
-            Tab currentTabContent = workspaceTabArea.getSelectionModel().getSelectedItem();
-            ScrollPane scrollPaneContent = (ScrollPane) currentTabContent.getContent();
-            HBox containerColumn = (HBox) scrollPaneContent.getContent();
-            containerColumn.getChildren().add(newColumn);
+        VBox createColumn = FXMLLoader.load(getClass().getResource("add-column-view.fxml"));
+        BorderPane borderPane =(BorderPane) workspaceStackPane.getChildren().get(0);
+        borderPane.setDisable(true);
+        workspaceStackPane.getChildren().add(createColumn);
 
 
-        }
     }
-
 
     @FXML
     void onDeleteProject(ActionEvent event) {
@@ -142,20 +138,6 @@ public class ControllerWorkspace {
             projectStatusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
         }
 
-    }
-
-    //Following method creates the connection to database
-    private Connection getConnection(){
-        Connection conn = null;
-
-        try {
-            Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection("jdbc:sqlite:kanbanDB.db");
-        } catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-            System.exit(0);
-        }
-        return conn;
     }
 
     //Rename Project View Functions
@@ -254,6 +236,19 @@ public class ControllerWorkspace {
         borderPane.setDisable(false);
     }
 
-    //////////////////////////
+
+    //Following method creates the connection to database
+    private Connection getConnection(){
+        Connection conn = null;
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection("jdbc:sqlite:kanbanDB.db");
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
+        return conn;
+    }
 }
 
