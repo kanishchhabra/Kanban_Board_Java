@@ -85,17 +85,16 @@ public class ControllerLogin {
                     statusArea.setBackground(new Background(new BackgroundFill(Color.GREEN,null,null)));
 
                     StackPane stackPane = FXMLLoader.load(getClass().getResource("workspace-view.fxml"));
-                    BorderPane borderPane = (BorderPane)stackPane.getChildren().get(0);
-                    KanbanLauncher.workspaceBorderPane = borderPane;
-                    KanbanLauncher.workspaceStackPane = (StackPane) borderPane.getParent();
+                    KanbanLauncher.workspaceBorderPane = (BorderPane)stackPane.getChildren().get(0);
+                    KanbanLauncher.workspaceStackPane = stackPane;
 
-                    VBox topBarContainer = (VBox) borderPane.getTop();
+                    VBox topBarContainer = (VBox) KanbanLauncher.workspaceBorderPane.getTop();
                     HBox topBar = (HBox) topBarContainer.getChildren().get(1);
                     HBox infoBar = (HBox) topBar.getChildren().get(1);
                     Label firstName = (Label) infoBar.getChildren().get(1);
                     firstName.setText(KanbanLauncher.loggedUser.getFirstName());
 
-                    TabPane tabPane = (TabPane)borderPane.getCenter();
+                    TabPane tabPane = (TabPane)KanbanLauncher.workspaceBorderPane.getCenter();
 
 
 

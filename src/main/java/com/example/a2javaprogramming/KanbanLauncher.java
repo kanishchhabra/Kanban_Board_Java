@@ -12,7 +12,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
+import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -24,7 +28,7 @@ public class KanbanLauncher extends Application {
     public static  HashMap<Integer, VBox> Columns = new HashMap<Integer, VBox>();
 
     //Public Columns Hash Table and Current Column
-    public static Task currentTask = new Task(0, "","", 0);
+    public static Task currentTask = new Task(0, "","", 0, new java.sql.Date(System.currentTimeMillis()),"" );
     public static  HashMap<Integer, Accordion> Tasks = new HashMap<Integer, Accordion>();
 
     //Projects Java Class and GUI Tab

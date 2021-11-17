@@ -70,9 +70,22 @@ public class ControllerColumn {
     //----------------------------------------------------------------------------------------
     //Functions from Column
     @FXML
-    void onAddTask(ActionEvent event) throws Exception {
-        Accordion newTask = FXMLLoader.load(getClass().getResource("task-view.fxml"));
-        tasksContainer.getChildren().add(newTask);
+    void onAddTask(ActionEvent event) {
+        try{
+            ScrollPane newTask = FXMLLoader.load(getClass().getResource("add-task-view.fxml"));
+            VBox task = (VBox) newTask.getContent();
+
+            ChoiceBox status = (ChoiceBox) task.getChildren().get(8);
+            status.getItems().add("Yet to Start");
+            status.getItems().add("Ongoing");
+            status.getItems().add("Completed");
+
+            KanbanLauncher.workspaceStackPane.getChildren().add(newTask);
+            KanbanLauncher.workspaceBorderPane.setDisable(true);
+
+        }catch (Exception e){
+
+        }
     }
 
     @FXML
@@ -116,9 +129,7 @@ public class ControllerColumn {
             //Following code creates adds a new column to DB. Displays the errors in the status area
             try{
                 //Getting to the Tab Pane
-                StackPane workspaceStackPane = (StackPane) createColumnWindow.getParent();
-                BorderPane borderPane = (BorderPane) workspaceStackPane.getChildren().get(0);
-                TabPane workspaceTabArea = (TabPane) borderPane.getCenter();
+                TabPane workspaceTabArea = (TabPane) KanbanLauncher.workspaceBorderPane.getCenter();
 
                 if (!workspaceTabArea.getTabs().isEmpty()) {
                     //Getting all the relevant controls
@@ -162,8 +173,8 @@ public class ControllerColumn {
 
                     //Closing the column window
                     createColumnWindow.setVisible(false);
-                    borderPane.setDisable(false);
-                    workspaceStackPane.getChildren().remove(createColumnWindow);
+                    KanbanLauncher.workspaceBorderPane.setDisable(false);
+                    KanbanLauncher.workspaceStackPane.getChildren().remove(createColumnWindow);
 
                     //Closing connection
                     conn.close();
@@ -171,7 +182,7 @@ public class ControllerColumn {
 
             }  catch (Exception e){
                 statusArea.setVisible(true);
-                statusArea.setText(e.getClass().getName() + ": " + e.getMessage());
+                statusArea.setText(e.getClass().getName() + ": " + e.getMessage() + "--------" + e.toString());
                 statusArea.setWrapText(true);
                 statusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
             }

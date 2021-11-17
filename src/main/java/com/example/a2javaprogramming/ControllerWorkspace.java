@@ -206,11 +206,9 @@ public class ControllerWorkspace {
             newProject.setText(projectName.getText());
 
             //Moving up the hierarchy to add new tab
-            StackPane stackPane = (StackPane) createProjectWindow.getParent();
-            stackPane.getChildren().remove(createProjectWindow);
-            BorderPane borderPane =(BorderPane) stackPane.getChildren().get(0);
-            borderPane.setDisable(false);
-            BorderPane borderPaneArea = (BorderPane) stackPane.getChildren().get(0);
+            KanbanLauncher.workspaceStackPane.getChildren().remove(createProjectWindow);
+            KanbanLauncher.workspaceBorderPane.setDisable(false);
+            BorderPane borderPaneArea = (BorderPane) KanbanLauncher.workspaceStackPane.getChildren().get(0);
             TabPane tabArea = (TabPane) borderPaneArea.getCenter();
 
             //Showing new project on GUI
