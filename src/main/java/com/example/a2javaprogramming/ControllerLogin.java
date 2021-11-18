@@ -103,21 +103,65 @@ public class ControllerLogin {
                     pstmt.setString(1, uName);
                     ResultSet projects = pstmt.executeQuery();
 
-                    /*
                     while (projects.next()){
-
-                        KanbanLauncher.Projects.put(projects.getInt("projectId"), );
-                    }
-
-                    for (Project project:
-                        KanbanLauncher.Projects) {
                         Tab newProject = FXMLLoader.load(getClass().getResource("project-view.fxml"));
-                        newProject.setText(project.getProjectName());
-                        newProject.setId(Integer.toString(project.getProjectID()));
-                        tabPane.getTabs().add(newProject);
-                    }
-                     */
+                        newProject.setId(String.valueOf(projects.getInt("projectId")));
+                        newProject.setText(projects.getString("projectName"));
+                        KanbanLauncher.Projects.put(projects.getInt("projectId"), newProject);
 
+                        //Fetching the HBox to add columns
+                        HBox projectColumns = (HBox) ((ScrollPane) newProject.getContent()).getContent();
+                        sql = "SELECT * FROM Columns WHERE  projectId = ?";
+                        pstmt = conn.prepareStatement(sql);
+                        pstmt.setInt(1, projects.getInt("projectId"));
+                        ResultSet columns = pstmt.executeQuery();
+
+                        //Iterating over Columns
+                        while (columns.next()){
+                            VBox newColumn = FXMLLoader.load(getClass().getResource("column-view.fxml"));
+                            newColumn.setId(Integer.toString(columns.getInt("columnId")));
+                            Label columnName = (Label) ((HBox) newColumn.getChildren().get(0)).getChildren().get(0);
+                            columnName.setText(columns.getString("columnName"));
+
+                            //Adding new column to the Hash Map
+                            KanbanLauncher.Columns.put(columns.getInt("columnId"), newColumn);
+
+                            //Adding column on the GUI
+                            projectColumns.getChildren().add(newColumn);
+
+                            //Iterating Over Tasks
+                            VBox columnTasks = (VBox) newColumn.getChildren().get(1);
+                            sql = "SELECT * FROM Tasks WHERE  columnId = ?";
+                            pstmt = conn.prepareStatement(sql);
+                            pstmt.setInt(1, columns.getInt("columnId"));
+                            ResultSet tasks = pstmt.executeQuery();
+                            //Iterating over Columns
+                            while (tasks.next()) {
+                                Accordion newTask = FXMLLoader.load(getClass().getResource("task-view.fxml"));
+                                newTask.setId(Integer.toString(tasks.getInt("taskId")));
+
+                                TitledPane taskPane = newTask.getPanes().get(0);
+                                taskPane.setText(tasks.getString("taskName"));
+
+                                //Setting GUI values
+                                VBox taskContainer = (VBox) taskPane.getContent();
+                                ((TextArea) taskContainer.getChildren().get(1)).setText(tasks.getString("taskDescription"));
+                                ((TextField) taskContainer.getChildren().get(5)).setText(tasks.getString("taskStatus"));
+
+
+                                //Adding new task to the Hash Map
+                                KanbanLauncher.Tasks.put(tasks.getInt("taskId"), newTask);
+
+                                //Adding tasks on the GUI
+                                columnTasks.getChildren().add(newTask);
+                            }
+                        }
+                    }
+
+                    for (Tab project:
+                        KanbanLauncher.Projects.values()) {
+                        tabPane.getTabs().add(project);
+                    }
                     Scene scene = new Scene(stackPane, 720, 420);
                     // get a handle to the stage
                     Stage stage = (Stage) signUp.getScene().getWindow();
@@ -135,8 +179,8 @@ public class ControllerLogin {
                 }
 
             }  catch (Exception e){
-                System.out.println(e);
-                statusArea.setText(e.getClass().getName() + ": " + e.getMessage());
+                System.out.println(e.toString());
+                statusArea.setText(e.getClass().getName() + ": " + e.getMessage() + "------" + e.toString());
                 statusArea.setWrapText(true);
                 statusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
             }

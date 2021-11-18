@@ -112,12 +112,12 @@ public class ControllerWorkspace {
 
     @FXML
     void onNewColumn(ActionEvent event) throws Exception {
-        VBox createColumn = FXMLLoader.load(getClass().getResource("add-column-view.fxml"));
-        BorderPane borderPane =(BorderPane) workspaceStackPane.getChildren().get(0);
-        borderPane.setDisable(true);
-        workspaceStackPane.getChildren().add(createColumn);
-
-
+        if (!workspaceTabArea.getTabs().isEmpty()){
+            VBox createColumn = FXMLLoader.load(getClass().getResource("add-column-view.fxml"));
+            BorderPane borderPane =(BorderPane) workspaceStackPane.getChildren().get(0);
+            borderPane.setDisable(true);
+            workspaceStackPane.getChildren().add(createColumn);
+        }
     }
 
     @FXML
