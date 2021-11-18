@@ -32,8 +32,9 @@ public class KanbanLauncher extends Application {
     public static  HashMap<Integer, Accordion> Tasks = new HashMap<Integer, Accordion>();
 
     //Projects Java Class and GUI Tab
-    public static LinkedList<Project> projects = new LinkedList<Project>();
-    public static LinkedList<Tab> projectTabs = new LinkedList<Tab>();
+    public static Project currentProject = new Project(0, "","");
+    public static  HashMap<Integer, Tab> Projects = new HashMap<Integer, Tab>();
+
 
     //Work Space
     public static BorderPane workspaceBorderPane = null;

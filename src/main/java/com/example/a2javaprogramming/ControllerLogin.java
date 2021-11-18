@@ -103,18 +103,21 @@ public class ControllerLogin {
                     pstmt.setString(1, uName);
                     ResultSet projects = pstmt.executeQuery();
 
-
+                    /*
                     while (projects.next()){
-                        KanbanLauncher.projects.add(new Project(projects.getInt("projectId"), projects.getString("projectName"), projects.getString("username")));
+
+                        KanbanLauncher.Projects.put(projects.getInt("projectId"), );
                     }
 
                     for (Project project:
-                        KanbanLauncher.projects) {
+                        KanbanLauncher.Projects) {
                         Tab newProject = FXMLLoader.load(getClass().getResource("project-view.fxml"));
                         newProject.setText(project.getProjectName());
                         newProject.setId(Integer.toString(project.getProjectID()));
                         tabPane.getTabs().add(newProject);
                     }
+                     */
+
                     Scene scene = new Scene(stackPane, 720, 420);
                     // get a handle to the stage
                     Stage stage = (Stage) signUp.getScene().getWindow();

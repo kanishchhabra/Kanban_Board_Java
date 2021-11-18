@@ -50,6 +50,13 @@ public class ControllerWorkspace {
     @FXML
     private TextArea projectStatusArea;
 
+    //From Project View
+    @FXML
+    private ScrollPane columnsScrollPane;
+
+    @FXML
+    private HBox columnsContainer;
+
     //Create Project View
     @FXML
     private VBox createProjectWindow;
@@ -203,13 +210,32 @@ public class ControllerWorkspace {
 
             //Creates new project window on the GUI
             Tab newProject = FXMLLoader.load(getClass().getResource("project-view.fxml"));
-            newProject.setText(projectName.getText());
+
+            //Getting the new project created
+            sql = "SELECT * FROM Projects WHERE username = (SELECT username FROM Users WHERE  username = ? ) ORDER BY projectId DESC LIMIT 1";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, KanbanLauncher.loggedUser.getUsername());
+            ResultSet project = pstmt.executeQuery();
+
+            //Setting current project and adding project to the hash map
+            while (project.next()){
+                KanbanLauncher.currentProject.setProjectID(project.getInt("projectId"));
+                KanbanLauncher.currentProject.setProjectName(project.getString("projectName"));
+                KanbanLauncher.currentProject.setUsername(project.getString("username"));
+            }
+            newProject.setId(Integer.toString(KanbanLauncher.currentProject.getProjectID()));
+            newProject.setText(KanbanLauncher.currentProject.getProjectName());
+            KanbanLauncher.Projects.put(KanbanLauncher.currentProject.getProjectID(), newProject);
+
+            //Updating Status Bar
+            statusArea.setText("Column Created");
+            statusArea.setWrapText(true);
+            statusArea.setBackground(new Background(new BackgroundFill(Color.GREEN,null,null)));
 
             //Moving up the hierarchy to add new tab
             KanbanLauncher.workspaceStackPane.getChildren().remove(createProjectWindow);
             KanbanLauncher.workspaceBorderPane.setDisable(false);
-            BorderPane borderPaneArea = (BorderPane) KanbanLauncher.workspaceStackPane.getChildren().get(0);
-            TabPane tabArea = (TabPane) borderPaneArea.getCenter();
+            TabPane tabArea = (TabPane) KanbanLauncher.workspaceBorderPane.getCenter();
 
             //Showing new project on GUI
             tabArea.getTabs().add(newProject);
@@ -247,6 +273,30 @@ public class ControllerWorkspace {
             System.exit(0);
         }
         return conn;
+    }
+
+    //----------------------------------------------------------------------------------------
+    //Sets Current Column
+    public void currentProjectSetter() {
+        try{
+            Connection conn = getConnection();
+            String projectId = columnsScrollPane.getParent().getId();
+            //Getting the new column created
+            String sql = "SELECT * FROM Projects WHERE projectId = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, Integer.valueOf(projectId));
+            ResultSet column = pstmt.executeQuery();
+
+            while (column.next()){
+                KanbanLauncher.currentProject.setProjectID(column.getInt("projectId"));
+                KanbanLauncher.currentProject.setProjectName(column.getString("projectName"));
+                KanbanLauncher.currentProject.setUsername(column.getString("username"));
+            }
+            System.out.println(KanbanLauncher.currentProject.getProjectID());
+
+        }catch (Exception e){
+
+        }
     }
 }
 
