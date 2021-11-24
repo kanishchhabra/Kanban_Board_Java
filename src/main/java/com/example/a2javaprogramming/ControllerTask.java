@@ -76,7 +76,29 @@ public class ControllerTask {
 
     @FXML
     void onColumnDelete(ActionEvent event) {
+        Connection conn = getConnection();
+        try {
+            Integer taskId = KanbanLauncher.currentTask.getTaskId();
 
+            //Deleting Tasks
+            KanbanLauncher.Columns.remove(taskId);
+            String sql = "DELETE FROM Tasks WHERE taskId = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, KanbanLauncher.currentTask.getTaskId());
+            pstmt.executeUpdate();
+
+            conn.close();
+
+            //Refreshing Project
+            KanbanLauncher.workspaceBorderPane.getCenter().setDisable(true);
+            ProjectRefresh refresh = new ProjectRefresh();
+            refresh.completeRefresh(KanbanLauncher.loggedUser.getUsername(), KanbanLauncher.loggedUser.getPassword());
+            KanbanLauncher.workspaceBorderPane.getCenter().setDisable(false);
+
+        }catch (Exception e){
+            TextArea statusAreaMain = (TextArea) KanbanLauncher.workspaceBorderPane.getBottom();
+            statusAreaMain.setText(e.getMessage());
+        }
 
     }
 
@@ -125,8 +147,19 @@ public class ControllerTask {
 
             //Closing connection
             conn.close();
+
+            //Refreshing Project
+            KanbanLauncher.workspaceBorderPane.getCenter().setDisable(true);
+            ProjectRefresh refresh = new ProjectRefresh();
+            refresh.completeRefresh(KanbanLauncher.loggedUser.getUsername(), KanbanLauncher.loggedUser.getPassword());
+            KanbanLauncher.workspaceBorderPane.getCenter().setDisable(false);
+
+            //Resetting Visited
+            saveTask.setVisited(false);
+
         }catch (Exception e){
-            System.out.println(e.toString());
+            TextArea statusAreaMain = (TextArea) KanbanLauncher.workspaceBorderPane.getBottom();
+            statusAreaMain.setText(e.getMessage());
         }
     }
 
@@ -223,7 +256,7 @@ public class ControllerTask {
 
         }  catch (Exception e){
             statusArea.setVisible(true);
-            statusArea.setText(e.getClass().getName() + ": " + e.getMessage() + "----" + e.toString());
+            statusArea.setText(e.getMessage());
             statusArea.setWrapText(true);
             statusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
         }
@@ -238,7 +271,6 @@ public class ControllerTask {
             Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection("jdbc:sqlite:kanbanDB.db");
         } catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
             System.exit(0);
         }
         return conn;
@@ -264,7 +296,8 @@ public class ControllerTask {
             }
 
         }catch (Exception e){
-            System.out.println(e.getMessage());
+            TextArea statusAreaMain = (TextArea) KanbanLauncher.workspaceBorderPane.getBottom();
+            statusAreaMain.setText(e.getMessage());
         }
     }
 }

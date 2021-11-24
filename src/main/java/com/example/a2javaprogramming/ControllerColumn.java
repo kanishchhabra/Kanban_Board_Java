@@ -84,7 +84,8 @@ public class ControllerColumn {
             KanbanLauncher.workspaceBorderPane.setDisable(true);
 
         }catch (Exception e){
-
+            TextArea statusAreaMain = (TextArea) KanbanLauncher.workspaceBorderPane.getBottom();
+            statusAreaMain.setText(e.getMessage());
         }
     }
 
@@ -93,18 +94,55 @@ public class ControllerColumn {
         newColumnContainer.getChildren().removeAll(newColumnContainer.getChildren());
         Connection conn = getConnection();
         try {
-            String sql = "DELETE FROM Columns WHERE columnId = ?";
+            //Dependencies
+            //Finding Tasks with the column
+            Integer columnId = KanbanLauncher.currentColumn.getColumnId();
+            String sql = "SELECT taskId FROM Tasks WHERE columnId = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, columnId);
+            ResultSet tasks = pstmt.executeQuery();
+
+            //Deleting Tasks
+            while (tasks.next()){
+                Integer taskId = tasks.getInt("taskId");
+                KanbanLauncher.Tasks.remove(taskId);
+            }
+            sql = "DELETE FROM Tasks WHERE columnId = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, columnId);
+            pstmt.executeUpdate();
+
+            //Deleting Columns
+            KanbanLauncher.Columns.remove(columnId);
+            sql = "DELETE FROM Columns WHERE columnId = ?";
+            pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, KanbanLauncher.currentColumn.getColumnId());
             pstmt.executeUpdate();
-        }catch (Exception e){   }
+
+            conn.close();
+
+            //Refreshing Project
+            KanbanLauncher.workspaceBorderPane.getCenter().setDisable(true);
+            ProjectRefresh refresh = new ProjectRefresh();
+            refresh.completeRefresh(KanbanLauncher.loggedUser.getUsername(), KanbanLauncher.loggedUser.getPassword());
+            KanbanLauncher.workspaceBorderPane.getCenter().setDisable(false);
+
+        }catch (Exception e){
+            TextArea statusAreaMain = (TextArea) KanbanLauncher.workspaceBorderPane.getBottom();
+            statusAreaMain.setText(e.getMessage());
+        }
     }
 
     @FXML
-    void onRenameColumn(ActionEvent event) throws Exception {
-        VBox renameColumn = FXMLLoader.load(getClass().getResource("rename-column-view.fxml"));
-        KanbanLauncher.workspaceBorderPane.setDisable(true);
-        KanbanLauncher.workspaceStackPane.getChildren().add(renameColumn);
+    void onRenameColumn(ActionEvent event) {
+        try {
+            VBox renameColumn = FXMLLoader.load(getClass().getResource("rename-column-view.fxml"));
+            KanbanLauncher.workspaceBorderPane.setDisable(true);
+            KanbanLauncher.workspaceStackPane.getChildren().add(renameColumn);
+        }catch (Exception e){
+            TextArea statusAreaMain = (TextArea) KanbanLauncher.workspaceBorderPane.getBottom();
+            statusAreaMain.setText(e.getMessage());
+        }
     }
 
     //----------------------------------------------------------------------------------------
@@ -124,7 +162,7 @@ public class ControllerColumn {
     }
 
     @FXML
-    void onCreateColumn(ActionEvent event) throws Exception {
+    void onCreateColumn(ActionEvent event) {
             Connection conn = getConnection();
             //Following code creates adds a new column to DB. Displays the errors in the status area
             try{
@@ -179,14 +217,16 @@ public class ControllerColumn {
                     //Closing connection
                     conn.close();
 
-                    //Project Refresh
+                    //Refreshing Project
+                    KanbanLauncher.workspaceBorderPane.getCenter().setDisable(true);
                     ProjectRefresh refresh = new ProjectRefresh();
                     refresh.completeRefresh(KanbanLauncher.loggedUser.getUsername(), KanbanLauncher.loggedUser.getPassword());
+                    KanbanLauncher.workspaceBorderPane.getCenter().setDisable(false);
                 }
 
             }  catch (Exception e){
                 statusArea.setVisible(true);
-                statusArea.setText(e.getClass().getName() + ": " + e.getMessage() + "--------" + e.toString());
+                statusArea.setText(e.getMessage());
                 statusArea.setWrapText(true);
                 statusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
             }
@@ -224,7 +264,11 @@ public class ControllerColumn {
 
             conn.close();
 
-
+            //Refreshing Project
+            KanbanLauncher.workspaceBorderPane.getCenter().setDisable(true);
+            ProjectRefresh refresh = new ProjectRefresh();
+            refresh.completeRefresh(KanbanLauncher.loggedUser.getUsername(), KanbanLauncher.loggedUser.getPassword());
+            KanbanLauncher.workspaceBorderPane.getCenter().setDisable(false);
 
         }  catch (Exception e){
             renameStatusArea.setVisible(true);
@@ -244,7 +288,6 @@ public class ControllerColumn {
             Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection("jdbc:sqlite:kanbanDB.db");
         } catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
             System.exit(0);
         }
         return conn;
@@ -267,7 +310,8 @@ public class ControllerColumn {
             }
 
         }catch (Exception e){
-
+            TextArea statusAreaMain = (TextArea) KanbanLauncher.workspaceBorderPane.getBottom();
+            statusAreaMain.setText(e.getMessage());
         }
     }
 }

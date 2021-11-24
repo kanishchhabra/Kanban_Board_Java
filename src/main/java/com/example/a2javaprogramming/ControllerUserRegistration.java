@@ -68,7 +68,7 @@ public class ControllerUserRegistration {
             conn.close();
 
         }  catch (Exception e){
-            statusArea.setText(e.getClass().getName() + ": " + e.getMessage());
+            statusArea.setText(e.getMessage());
             statusArea.setWrapText(true);
             statusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
         }
@@ -86,7 +86,7 @@ public class ControllerUserRegistration {
             stage.setScene(scene);
             stage.show();
         } catch (Exception e){
-            statusArea.setText(e.getClass().getName() + ": " + e.getMessage());
+            statusArea.setText(e.getMessage());
             statusArea.setWrapText(true);
             statusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
         }
@@ -101,7 +101,7 @@ public class ControllerUserRegistration {
             stage.close();
         }
         catch (Exception e) {
-            statusArea.setText(e.getClass().getName() + ": " + e.getMessage());
+            statusArea.setText(e.getMessage());
             statusArea.setWrapText(true);
             statusArea.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
         }
@@ -115,7 +115,6 @@ public class ControllerUserRegistration {
             Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection("jdbc:sqlite:kanbanDB.db");
         } catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
             System.exit(0);
         }
         return conn;

@@ -40,7 +40,7 @@ public class ControllerLogin {
             stage.close();
         }
         catch (Exception e) {
-            statusArea.setText(e.getClass().getName() + ": " + e.getMessage());
+            statusArea.setText(e.getMessage());
             statusArea.setWrapText(true);
             statusArea.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
         }
@@ -186,7 +186,7 @@ public class ControllerLogin {
                         KanbanLauncher.Projects.values()) {
                         tabPane.getTabs().add(project);
                     }
-                    Scene scene = new Scene(stackPane, 720, 420);
+                    Scene scene = new Scene(stackPane, 720, 580);
                     // get a handle to the stage
                     Stage stage = (Stage) signUp.getScene().getWindow();
                     // do what you have to do
@@ -203,8 +203,7 @@ public class ControllerLogin {
                 }
 
             }  catch (Exception e){
-                System.out.println(e.toString());
-                statusArea.setText(e.getClass().getName() + ": " + e.getMessage() + "------" + e.toString());
+                statusArea.setText(e.getMessage());
                 statusArea.setWrapText(true);
                 statusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
             }
@@ -223,7 +222,7 @@ public class ControllerLogin {
             stage.setScene(scene);
             stage.show();
         } catch (Exception e){
-            statusArea.setText(e.getClass().getName() + ": " + e.getMessage());
+            statusArea.setText(e.getMessage());
             statusArea.setWrapText(true);
             statusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
         }
@@ -237,7 +236,6 @@ public class ControllerLogin {
             Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection("jdbc:sqlite:kanbanDB.db");
         } catch ( Exception e ) {
-            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
             System.exit(0);
         }
         return conn;

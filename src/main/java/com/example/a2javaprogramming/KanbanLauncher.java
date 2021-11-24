@@ -43,7 +43,7 @@ public class KanbanLauncher extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(KanbanLauncher.class.getResource("user-login-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 225, 480);
-        stage.setTitle("Register");
+        stage.setTitle("Login");
         stage.setScene(scene);
         stage.show();
     }
