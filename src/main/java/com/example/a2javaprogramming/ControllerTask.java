@@ -3,7 +3,6 @@ package com.example.a2javaprogramming;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -12,7 +11,6 @@ import javafx.scene.paint.Color;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
 
 public class ControllerTask {
 
@@ -30,19 +28,19 @@ public class ControllerTask {
     private DatePicker dueDate;
 
     @FXML
-    private TextField taskStatus;
-
-    @FXML
-    private ProgressBar taskProgress;
-
-    @FXML
-    private Hyperlink viewTaskList;
+    private ChoiceBox<?> taskStatus;
 
     @FXML
     private Hyperlink columnDelete;
 
     @FXML
     private Hyperlink saveTask;
+
+    @FXML
+    private TextField taskNName;
+
+    @FXML
+    private ChoiceBox<?> taskColumn;
 
     //-----------------------------------------------------------------------
     //Controls from Add Task View
@@ -75,19 +73,61 @@ public class ControllerTask {
 
     //----------------------------------------------
     //Functions from Task View
-    @FXML
-    void currentTaskSetter(MouseEvent event) {
-
-    }
 
     @FXML
     void onColumnDelete(ActionEvent event) {
 
+
     }
 
     @FXML
-    void onSaveTask(MouseEvent event) {
+    void onSaveTask(ActionEvent event) {
+        Connection conn = getConnection();
 
+        try{
+            //Fetching date
+            String year = String.valueOf(dueDate.getValue().getYear());
+            String month = String.valueOf(dueDate.getValue().getMonthValue());
+            String day = String.valueOf(dueDate.getValue().getDayOfMonth());
+            String date = year + month + day;
+
+            java.util.Date dueDate = new SimpleDateFormat("yyyyMMdd").parse(date);
+            java.sql.Date sqlDueDate = new java.sql.Date(dueDate.getTime());
+
+            //Fetching Targeted Column
+            String taskColumnName = taskColumn.getSelectionModel().getSelectedItem().toString();
+            String columnId = taskColumnName.substring(0, (taskColumnName.indexOf(":") - 2) );
+
+            String sql = "UPDATE Tasks SET taskName = ?, taskStatus = ?, columnId = ?, dueDate = ?, taskDescription = ? WHERE taskId = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, taskNName.getText());
+            pstmt.setString(2, taskStatus.getSelectionModel().getSelectedItem().toString());
+            pstmt.setInt(3, Integer.valueOf(columnId));
+            pstmt.setDate(4, sqlDueDate);
+            pstmt.setString(5, taskDescription.getText());
+            pstmt.setInt(6, KanbanLauncher.currentTask.getTaskId());
+            pstmt.executeUpdate();
+
+            taskPane.setText(taskNName.getText());
+
+            //Adding Task to the targeted column
+            VBox targetColumn = KanbanLauncher.Columns.get(Integer.valueOf(columnId));
+            VBox targetedColumnContainer = (VBox)targetColumn.getChildren().get(1);
+            Accordion currentTask = KanbanLauncher.Tasks.get(Integer.valueOf(newTask.getId()));
+
+            if (!targetedColumnContainer.getChildren().contains(currentTask)){
+                targetedColumnContainer.getChildren().add(currentTask);
+            }
+
+
+            //Updating task on Hash Map
+            KanbanLauncher.Tasks.replace(KanbanLauncher.currentTask.getTaskId(), newTask);
+
+            //Closing connection
+            conn.close();
+        }catch (Exception e){
+            System.out.println(e.toString());
+        }
     }
 
     @FXML
@@ -110,7 +150,13 @@ public class ControllerTask {
         //Following code creates adds a new column to DB. Displays the errors in the status area
         try{
             //Inserting the new task into database
-            Date sqlDueDate = Date.valueOf(LocalDate.of(dueDateForm.getValue().getYear(), dueDateForm.getValue().getMonth(), dueDateForm.getValue().getDayOfMonth()));
+            String year = String.valueOf(dueDateForm.getValue().getYear());
+            String month = String.valueOf(dueDateForm.getValue().getMonthValue());
+            String day = String.valueOf(dueDateForm.getValue().getDayOfMonth());
+            String date = year + month + day;
+            java.util.Date dueDate = new SimpleDateFormat("yyyyMMdd").parse(date);
+            java.sql.Date sqlDueDate = new java.sql.Date(dueDate.getTime());
+            System.out.println(sqlDueDate);
 
             String sql = "INSERT INTO Tasks (taskName, taskStatus, columnId, dueDate, taskDescription) VALUES (?,?, (SELECT columnId FROM Columns WHERE  columnId = ? ), ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -122,13 +168,13 @@ public class ControllerTask {
             pstmt.executeUpdate();
 
             //Getting the new task created
-            sql = "SELECT * FROM Tasks WHERE columnId = (SELECT columnId FROM Columns WHERE  columnId = ? ) ORDER BY columnId DESC LIMIT 1";
+            sql = "SELECT * FROM Tasks WHERE columnId = (SELECT columnId FROM Columns WHERE  columnId = ? ) ORDER BY taskId DESC LIMIT 1";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, Integer.valueOf(KanbanLauncher.currentColumn.getColumnId()));
             ResultSet task = pstmt.executeQuery();
 
 
-            statusArea.setText("Column Created");
+            statusArea.setText("Task Created");
             statusArea.setWrapText(true);
             statusArea.setBackground(new Background(new BackgroundFill(Color.GREEN,null,null)));
 
@@ -136,7 +182,13 @@ public class ControllerTask {
             //Creates new column window on the GUI
             Accordion newTask = FXMLLoader.load(getClass().getResource("task-view.fxml"));
             VBox tasksContainer = (VBox) KanbanLauncher.Columns.get(KanbanLauncher.currentColumn.getColumnId()).getChildren().get(1);
+
             VBox addedTask = (VBox) ((TitledPane) newTask.getPanes().get(0)).getContent();
+            ChoiceBox status = (ChoiceBox) addedTask.getChildren().get(5);
+            status.getItems().add("Yet to Start");
+            status.getItems().add("Ongoing");
+            status.getItems().add("Completed");
+
             tasksContainer.getChildren().add(newTask);
 
             //Setting ID to th new column and setting current column:
@@ -151,9 +203,10 @@ public class ControllerTask {
 
                 //Setting task on GUI
                 ((TextArea) addedTask.getChildren().get(1)).setText(task.getString(6));
-                ((TextField) addedTask.getChildren().get(5)).setText(task.getString(3));
+                ((ChoiceBox) addedTask.getChildren().get(5)).setValue(task.getString(3));
+                ((DatePicker) addedTask.getChildren().get(3)).setValue(LocalDate.of(Integer.valueOf(year), Integer.valueOf(month), Integer.valueOf(day)));
 
-                newTask.setId(String.valueOf(task.getInt("columnId")));
+                newTask.setId(String.valueOf(task.getInt("taskId")));
                 ((TitledPane) newTask.getPanes().get(0)).setText(task.getString(2));
             }
 
@@ -177,30 +230,6 @@ public class ControllerTask {
     }
 
     //-------------------------------------------
-    //Gets current task
-    @FXML
-    public void currentTaskSetter() {
-        try{
-            Connection conn = getConnection();
-            //Getting the new task created
-            String sql = "SELECT * FROM Task WHERE taskId = ?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, Integer.valueOf(newTask.getId()));
-            ResultSet task = pstmt.executeQuery();
-            while (task.next()){
-                KanbanLauncher.currentTask.setTaskId(task.getInt("taskId"));
-                KanbanLauncher.currentTask.setTaskName(task.getString("taskName"));
-                KanbanLauncher.currentTask.setColumnId(task.getInt("columnId"));
-                KanbanLauncher.currentTask.setTaskStatus(task.getString("taskStatus"));
-                KanbanLauncher.currentTask.setTaskDescription(task.getString("taskDescription"));
-                KanbanLauncher.currentTask.setDueDate(task.getDate("dueDate"));
-            }
-
-        }catch (Exception e){
-
-        }
-    }
-
     //Following method creates the connection to database
     private Connection getConnection(){
         Connection conn = null;
@@ -215,4 +244,27 @@ public class ControllerTask {
         return conn;
     }
 
+    //Gets current task
+    public void setCurrentTask()  {
+
+        try{
+            Connection conn = getConnection();
+            //Getting the new task created
+            String sql = "SELECT * FROM Tasks WHERE taskId = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, Integer.valueOf(newTask.getId()));
+            ResultSet task = pstmt.executeQuery();
+            while (task.next()) {
+                KanbanLauncher.currentTask.setTaskId(task.getInt("taskId"));
+                KanbanLauncher.currentTask.setTaskName(task.getString("taskName"));
+                KanbanLauncher.currentTask.setColumnId(task.getInt("columnId"));
+                KanbanLauncher.currentTask.setTaskStatus(task.getString("taskStatus"));
+                KanbanLauncher.currentTask.setTaskDescription(task.getString("taskDescription"));
+                KanbanLauncher.currentTask.setDueDate(task.getDate("dueDate"));
+            }
+
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
 }

@@ -51,7 +51,8 @@ public class ControllerLogin {
             statusArea.setText("Invalid Credentials");
             statusArea.setWrapText(true);
             statusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
-        }else{
+        }
+        else{
             String uName = username.getText();
             String pass = password.getText();
             String fName = "";
@@ -96,13 +97,12 @@ public class ControllerLogin {
 
                     TabPane tabPane = (TabPane)KanbanLauncher.workspaceBorderPane.getCenter();
 
-
-
                     sql = "SELECT * FROM Projects WHERE  username = ?";
                     pstmt = conn.prepareStatement(sql);
                     pstmt.setString(1, uName);
                     ResultSet projects = pstmt.executeQuery();
 
+                    //Iterating over projects to add new projects
                     while (projects.next()){
                         Tab newProject = FXMLLoader.load(getClass().getResource("project-view.fxml"));
                         newProject.setId(String.valueOf(projects.getInt("projectId")));
@@ -116,7 +116,7 @@ public class ControllerLogin {
                         pstmt.setInt(1, projects.getInt("projectId"));
                         ResultSet columns = pstmt.executeQuery();
 
-                        //Iterating over Columns
+                        //Iterating over Columns to add new Columns
                         while (columns.next()){
                             VBox newColumn = FXMLLoader.load(getClass().getResource("column-view.fxml"));
                             newColumn.setId(Integer.toString(columns.getInt("columnId")));
@@ -129,7 +129,7 @@ public class ControllerLogin {
                             //Adding column on the GUI
                             projectColumns.getChildren().add(newColumn);
 
-                            //Iterating Over Tasks
+                            //Iterating Over Tasks to set Tasks
                             VBox columnTasks = (VBox) newColumn.getChildren().get(1);
                             sql = "SELECT * FROM Tasks WHERE  columnId = ?";
                             pstmt = conn.prepareStatement(sql);
@@ -138,16 +138,40 @@ public class ControllerLogin {
                             //Iterating over Columns
                             while (tasks.next()) {
                                 Accordion newTask = FXMLLoader.load(getClass().getResource("task-view.fxml"));
+                                VBox task = (VBox) newTask.getPanes().get(0).getContent();
+
+                                //Setting Status
+                                ChoiceBox status = (ChoiceBox) task.getChildren().get(5);
+                                status.getItems().add("Yet to Start");
+                                status.getItems().add("Ongoing");
+                                status.getItems().add("Completed");
+
+                                //Setting Status
+                                ChoiceBox taskColumns = (ChoiceBox) task.getChildren().get(9);
+                                sql = "SELECT * FROM Columns WHERE  projectId = ?";
+                                pstmt = conn.prepareStatement(sql);
+                                pstmt.setInt(1, projects.getInt("projectId"));
+                                ResultSet iterableColumns = pstmt.executeQuery();
+                                while (iterableColumns.next()){
+                                    taskColumns.getItems().add(Integer.toString(iterableColumns.getInt("columnId")) + "  :  " + iterableColumns.getString("columnName"));
+                                    if (iterableColumns.getInt("columnId") == columns.getInt("columnId")){
+                                        taskColumns.setValue(Integer.toString(iterableColumns.getInt("columnId")) + "  :  " + iterableColumns.getString("columnName"));
+                                    }
+                                }
+
+                                //Setting ID on the GUI
                                 newTask.setId(Integer.toString(tasks.getInt("taskId")));
 
+                                //Setting Name on the Title Pane in Accordion
                                 TitledPane taskPane = newTask.getPanes().get(0);
                                 taskPane.setText(tasks.getString("taskName"));
 
                                 //Setting GUI values
                                 VBox taskContainer = (VBox) taskPane.getContent();
                                 ((TextArea) taskContainer.getChildren().get(1)).setText(tasks.getString("taskDescription"));
-                                ((TextField) taskContainer.getChildren().get(5)).setText(tasks.getString("taskStatus"));
-
+                                ((ChoiceBox) taskContainer.getChildren().get(5)).setValue(tasks.getString("taskStatus"));
+                                ((DatePicker) taskContainer.getChildren().get(3)).setValue((tasks.getDate("dueDate")).toLocalDate());
+                                ((TextField) taskContainer.getChildren().get(7)).setText(tasks.getString("taskName"));
 
                                 //Adding new task to the Hash Map
                                 KanbanLauncher.Tasks.put(tasks.getInt("taskId"), newTask);

@@ -178,6 +178,10 @@ public class ControllerColumn {
 
                     //Closing connection
                     conn.close();
+
+                    //Project Refresh
+                    ProjectRefresh refresh = new ProjectRefresh();
+                    refresh.completeRefresh(KanbanLauncher.loggedUser.getUsername(), KanbanLauncher.loggedUser.getPassword());
                 }
 
             }  catch (Exception e){

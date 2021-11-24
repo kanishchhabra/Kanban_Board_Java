@@ -27,7 +27,7 @@ public class KanbanLauncher extends Application {
     public static Column currentColumn = new Column(0, "", 0);
     public static  HashMap<Integer, VBox> Columns = new HashMap<Integer, VBox>();
 
-    //Public Columns Hash Table and Current Column
+    //Public Tasks Hash Table and Current Column
     public static Task currentTask = new Task(0, "","", 0, new java.sql.Date(System.currentTimeMillis()),"" );
     public static  HashMap<Integer, Accordion> Tasks = new HashMap<Integer, Accordion>();
 

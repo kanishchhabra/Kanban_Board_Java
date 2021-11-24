@@ -2,10 +2,10 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
@@ -13,27 +13,28 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<Accordion fx:id="newTask" onMouseMoved="#currentTaskSetter" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.a2javaprogramming.ControllerTask">
+<Accordion fx:id="newTask" onMouseMoved="#setCurrentTask" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.a2javaprogramming.ControllerTask">
    <panes>
-      <TitledPane fx:id="taskPane" animated="false" onMouseMoved="#currentTaskSetter" text="TaskName">
+      <TitledPane fx:id="taskPane" animated="false" onMouseMoved="#setCurrentTask" text="TaskName">
          <content>
-            <VBox onMouseMoved="#currentTaskSetter" prefHeight="283.0" prefWidth="196.0" spacing="5.0">
+            <VBox onMouseMoved="#setCurrentTask" prefHeight="283.0" prefWidth="196.0" spacing="5.0">
                <children>
-                  <Label onMouseMoved="#currentTaskSetter" text="Description" />
-                  <TextArea fx:id="taskDescription" onMouseMoved="#currentTaskSetter" prefHeight="14.0" prefWidth="192.0" wrapText="true" />
-                  <Label onMouseMoved="#currentTaskSetter" text="Due Date" />
-                  <DatePicker fx:id="dueDate" onMouseMoved="#currentTaskSetter" prefHeight="25.0" prefWidth="238.0" />
-                  <Label onMouseMoved="#currentTaskSetter" text="Status" />
-                  <TextField fx:id="taskStatus" editable="false" onMouseMoved="#currentTaskSetter" />
-                  <Label onMouseMoved="#currentTaskSetter" text="Progress" />
-                  <ProgressBar fx:id="taskProgress" onMouseMoved="#currentTaskSetter" prefHeight="18.0" prefWidth="261.0" progress="0.0" />
-                  <HBox onMouseMoved="#currentTaskSetter" prefHeight="100.0" prefWidth="200.0">
+                  <Label onMouseMoved="#setCurrentTask" text="Description" />
+                  <TextArea fx:id="taskDescription" onMouseMoved="#setCurrentTask" prefHeight="14.0" prefWidth="192.0" wrapText="true" />
+                  <Label onMouseMoved="#setCurrentTask" text="Due Date" />
+                  <DatePicker fx:id="dueDate" onMouseMoved="#setCurrentTask" prefHeight="25.0" prefWidth="238.0" />
+                  <Label onMouseMoved="#setCurrentTask" text="Status" />
+                  <ChoiceBox fx:id="taskStatus" onMouseMoved="#setCurrentTask" prefHeight="25.0" prefWidth="201.0" />
+                  <Label onMouseMoved="#setCurrentTask" text="Name" />
+                  <TextField fx:id="taskNName" onMouseMoved="#setCurrentTask" />
+                  <Label onMouseMoved="#setCurrentTask" text="Column" />
+                  <ChoiceBox fx:id="taskColumn" onMouseMoved="#setCurrentTask" prefHeight="25.0" prefWidth="201.0" />
+                  <HBox onMouseMoved="#setCurrentTask" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Hyperlink fx:id="viewTaskList" onAction="#onViewTaskList" onMouseMoved="#currentTaskSetter" text="View List" />
-                        <Region onMouseMoved="#currentTaskSetter" HBox.hgrow="ALWAYS" />
-                        <Hyperlink fx:id="columnDelete" onAction="#onColumnDelete" onMouseMoved="#currentTaskSetter" text="Delete" />
-                        <Region onMouseMoved="#currentTaskSetter" HBox.hgrow="ALWAYS" />
-                        <Hyperlink fx:id="saveTask" onAction="#onSaveTask" onMouseMoved="#currentTaskSetter" text="Save" />
+                        <Region onMouseMoved="#setCurrentTask" HBox.hgrow="ALWAYS" />
+                        <Hyperlink fx:id="columnDelete" onAction="#onColumnDelete" onMouseMoved="#setCurrentTask" text="Delete" />
+                        <Hyperlink fx:id="saveTask" onAction="#onSaveTask" onMouseMoved="#setCurrentTask" text="Save" />
+                        <Region onMouseMoved="#setCurrentTask" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                </children>
