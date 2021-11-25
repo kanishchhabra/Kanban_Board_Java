@@ -163,72 +163,74 @@ public class ControllerColumn {
 
     @FXML
     void onCreateColumn(ActionEvent event) {
-            Connection conn = getConnection();
-            //Following code creates adds a new column to DB. Displays the errors in the status area
-            try{
-                //Getting to the Tab Pane
-                TabPane workspaceTabArea = (TabPane) KanbanLauncher.workspaceBorderPane.getCenter();
+            if (!columnName.getText().isEmpty()){
+                Connection conn = getConnection();
+                //Following code creates adds a new column to DB. Displays the errors in the status area
+                try{
+                    //Getting to the Tab Pane
+                    TabPane workspaceTabArea = (TabPane) KanbanLauncher.workspaceBorderPane.getCenter();
 
-                if (!workspaceTabArea.getTabs().isEmpty()) {
-                    //Getting all the relevant controls
-                    Tab currentTabContent = workspaceTabArea.getSelectionModel().getSelectedItem();
-                    ScrollPane scrollPaneContent = (ScrollPane) currentTabContent.getContent();
-                    HBox containerColumn = (HBox) scrollPaneContent.getContent();
+                    if (!workspaceTabArea.getTabs().isEmpty()) {
+                        //Getting all the relevant controls
+                        Tab currentTabContent = workspaceTabArea.getSelectionModel().getSelectedItem();
+                        ScrollPane scrollPaneContent = (ScrollPane) currentTabContent.getContent();
+                        HBox containerColumn = (HBox) scrollPaneContent.getContent();
 
-                    //Inserting the new column into database
-                    String sql = "INSERT INTO Columns (columnName, projectId) VALUES (?, (SELECT projectId FROM Projects WHERE  projectId = ? ))";
-                    PreparedStatement pstmt = conn.prepareStatement(sql);
-                    pstmt.setString(1, columnName.getText());
-                    pstmt.setInt(2, Integer.valueOf(currentTabContent.getId()));
-                    pstmt.executeUpdate();
+                        //Inserting the new column into database
+                        String sql = "INSERT INTO Columns (columnName, projectId) VALUES (?, (SELECT projectId FROM Projects WHERE  projectId = ? ))";
+                        PreparedStatement pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, columnName.getText());
+                        pstmt.setInt(2, Integer.valueOf(currentTabContent.getId()));
+                        pstmt.executeUpdate();
 
-                    //Getting the new column created
-                    sql = "SELECT * FROM Columns WHERE projectId = (SELECT projectId FROM Projects WHERE  projectId = ? ) ORDER BY columnId DESC LIMIT 1";
-                    pstmt = conn.prepareStatement(sql);
-                    pstmt.setInt(1, Integer.valueOf(currentTabContent.getId()));
-                    ResultSet column = pstmt.executeQuery();
-
-
-                    statusArea.setText("Column Created");
-                    statusArea.setWrapText(true);
-                    statusArea.setBackground(new Background(new BackgroundFill(Color.GREEN,null,null)));
+                        //Getting the new column created
+                        sql = "SELECT * FROM Columns WHERE projectId = (SELECT projectId FROM Projects WHERE  projectId = ? ) ORDER BY columnId DESC LIMIT 1";
+                        pstmt = conn.prepareStatement(sql);
+                        pstmt.setInt(1, Integer.valueOf(currentTabContent.getId()));
+                        ResultSet column = pstmt.executeQuery();
 
 
-                    //Creates new column window on the GUI
-                    VBox newColumn = FXMLLoader.load(getClass().getResource("column-view.fxml"));
-                    HBox columnContent = (HBox) newColumn.getChildren().get(0);
-                    Label columnTitle = (Label) columnContent.getChildren().get(0);
-                    columnTitle.setText(columnName.getText());
+                        statusArea.setText("Column Created");
+                        statusArea.setWrapText(true);
+                        statusArea.setBackground(new Background(new BackgroundFill(Color.GREEN,null,null)));
 
-                    //Setting ID to th new column:
-                    while (column.next()){
-                        newColumn.setId(String.valueOf(column.getInt("columnId")));
+
+                        //Creates new column window on the GUI
+                        VBox newColumn = FXMLLoader.load(getClass().getResource("column-view.fxml"));
+                        HBox columnContent = (HBox) newColumn.getChildren().get(0);
+                        Label columnTitle = (Label) columnContent.getChildren().get(0);
+                        columnTitle.setText(columnName.getText());
+
+                        //Setting ID to th new column:
+                        while (column.next()){
+                            newColumn.setId(String.valueOf(column.getInt("columnId")));
+                        }
+
+                        //Showing new column on GUI and Hash Map
+                        containerColumn.getChildren().add(newColumn);
+                        KanbanLauncher.Columns.put(Integer.valueOf(newColumn.getId()), newColumn);
+
+                        //Closing the column window
+                        createColumnWindow.setVisible(false);
+                        KanbanLauncher.workspaceBorderPane.setDisable(false);
+                        KanbanLauncher.workspaceStackPane.getChildren().remove(createColumnWindow);
+
+                        //Closing connection
+                        conn.close();
+
+                        //Refreshing Project
+                        KanbanLauncher.workspaceBorderPane.getCenter().setDisable(true);
+                        ProjectRefresh refresh = new ProjectRefresh();
+                        refresh.completeRefresh(KanbanLauncher.loggedUser.getUsername(), KanbanLauncher.loggedUser.getPassword());
+                        KanbanLauncher.workspaceBorderPane.getCenter().setDisable(false);
                     }
 
-                    //Showing new column on GUI and Hash Map
-                    containerColumn.getChildren().add(newColumn);
-                    KanbanLauncher.Columns.put(Integer.valueOf(newColumn.getId()), newColumn);
-
-                    //Closing the column window
-                    createColumnWindow.setVisible(false);
-                    KanbanLauncher.workspaceBorderPane.setDisable(false);
-                    KanbanLauncher.workspaceStackPane.getChildren().remove(createColumnWindow);
-
-                    //Closing connection
-                    conn.close();
-
-                    //Refreshing Project
-                    KanbanLauncher.workspaceBorderPane.getCenter().setDisable(true);
-                    ProjectRefresh refresh = new ProjectRefresh();
-                    refresh.completeRefresh(KanbanLauncher.loggedUser.getUsername(), KanbanLauncher.loggedUser.getPassword());
-                    KanbanLauncher.workspaceBorderPane.getCenter().setDisable(false);
+                }  catch (Exception e){
+                    statusArea.setVisible(true);
+                    statusArea.setText(e.getMessage());
+                    statusArea.setWrapText(true);
+                    statusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
                 }
-
-            }  catch (Exception e){
-                statusArea.setVisible(true);
-                statusArea.setText(e.getMessage());
-                statusArea.setWrapText(true);
-                statusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
             }
         }
 
@@ -242,39 +244,41 @@ public class ControllerColumn {
 
     @FXML
     void onUpdateColumn(ActionEvent event) {
-        Connection conn = getConnection();
-        try{
-            String sql = "UPDATE Columns SET columnName = ? WHERE columnId = ?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, columnNewName.getText());
-            pstmt.setInt(2, KanbanLauncher.currentColumn.getColumnId());
-            pstmt.executeUpdate();
+        if (!columnNewName.getText().isEmpty()){
+            Connection conn = getConnection();
+            try{
+                String sql = "UPDATE Columns SET columnName = ? WHERE columnId = ?";
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, columnNewName.getText());
+                pstmt.setInt(2, KanbanLauncher.currentColumn.getColumnId());
+                pstmt.executeUpdate();
 
-            //Creates new column window on the GUI
-            VBox currentColumn = KanbanLauncher.Columns.get(KanbanLauncher.currentColumn.getColumnId());
-            Label columnName = (Label)((HBox) currentColumn.getChildren().get(0)).getChildren().get(0);
-            columnName.setText(columnNewName.getText());
+                //Creates new column window on the GUI
+                VBox currentColumn = KanbanLauncher.Columns.get(KanbanLauncher.currentColumn.getColumnId());
+                Label columnName = (Label)((HBox) currentColumn.getChildren().get(0)).getChildren().get(0);
+                columnName.setText(columnNewName.getText());
 
-            //Updating Current Column
-            KanbanLauncher.currentColumn.setColumnName(columnNewName.getText());
+                //Updating Current Column
+                KanbanLauncher.currentColumn.setColumnName(columnNewName.getText());
 
-            //Updating GUI
-            KanbanLauncher.workspaceBorderPane.setDisable(false);
-            KanbanLauncher.workspaceStackPane.getChildren().remove(renameColumnWindow);
+                //Updating GUI
+                KanbanLauncher.workspaceBorderPane.setDisable(false);
+                KanbanLauncher.workspaceStackPane.getChildren().remove(renameColumnWindow);
 
-            conn.close();
+                conn.close();
 
-            //Refreshing Project
-            KanbanLauncher.workspaceBorderPane.getCenter().setDisable(true);
-            ProjectRefresh refresh = new ProjectRefresh();
-            refresh.completeRefresh(KanbanLauncher.loggedUser.getUsername(), KanbanLauncher.loggedUser.getPassword());
-            KanbanLauncher.workspaceBorderPane.getCenter().setDisable(false);
+                //Refreshing Project
+                KanbanLauncher.workspaceBorderPane.getCenter().setDisable(true);
+                ProjectRefresh refresh = new ProjectRefresh();
+                refresh.completeRefresh(KanbanLauncher.loggedUser.getUsername(), KanbanLauncher.loggedUser.getPassword());
+                KanbanLauncher.workspaceBorderPane.getCenter().setDisable(false);
 
-        }  catch (Exception e){
-            renameStatusArea.setVisible(true);
-            renameStatusArea.setText(e.getClass().getName() + ": " + e.getMessage());
-            renameStatusArea.setWrapText(true);
-            renameStatusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
+            }  catch (Exception e){
+                renameStatusArea.setVisible(true);
+                renameStatusArea.setText(e.getClass().getName() + ": " + e.getMessage());
+                renameStatusArea.setWrapText(true);
+                renameStatusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
+            }
         }
 
     }

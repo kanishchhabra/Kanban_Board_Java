@@ -2,9 +2,12 @@ package com.example.a2javaprogramming;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
+import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -16,7 +19,6 @@ public class ProjectRefresh {
     public void completeRefresh(String uName, String pass){
 
         Connection conn = getConnection();
-        //Following code creates a new user. If the user already exists, it shows an error
         try{
             //creates account only if username is unique.
             String sql = "SELECT * FROM Users WHERE  username = ? AND password = ?";
@@ -24,6 +26,17 @@ public class ProjectRefresh {
             pstmt.setString(1, uName);
             pstmt.setString(2, pass);
             ResultSet account = pstmt.executeQuery();
+
+            VBox topBarContainer = (VBox) KanbanLauncher.workspaceBorderPane.getTop();
+            HBox topBar = (HBox) topBarContainer.getChildren().get(1);
+            HBox infoBar = (HBox) topBar.getChildren().get(1);
+            Label firstName = (Label) infoBar.getChildren().get(1);
+            firstName.setText(KanbanLauncher.loggedUser.getFirstName());
+
+            ImageView profilePictureImage = (ImageView) infoBar.getChildren().get(0);
+            FileInputStream imageInput = new FileInputStream(KanbanLauncher.loggedUser.getProfilePicture());
+            Image image = new Image(imageInput);
+            profilePictureImage.setImage(image);
 
             if (account.next() == true){
                 TabPane tabPane = (TabPane)KanbanLauncher.workspaceBorderPane.getCenter();

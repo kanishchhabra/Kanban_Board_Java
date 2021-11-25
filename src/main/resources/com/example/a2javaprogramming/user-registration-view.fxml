@@ -7,6 +7,7 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
@@ -28,6 +29,13 @@
             <Region HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
+      <HBox alignment="TOP_CENTER">
+         <children>
+            <Region HBox.hgrow="ALWAYS" />
+            <ImageView fx:id="profilePicture" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+            <Region HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
       <Label text="First Name" />
       <TextField fx:id="firstName" promptText="John" />
       <Label text="Last Name" />
@@ -36,6 +44,9 @@
       <TextField fx:id="username" promptText="username" />
       <Label text="Password" />
       <PasswordField fx:id="password" promptText="Password" />
+      <Label text="Profile Picture" />
+      <Hyperlink fx:id="fileSelector" onAction="#onFileSelector" text="Select Picture" />
+      <TextField fx:id="fileURL" disable="true" editable="false" />
       <TextArea fx:id="statusArea" editable="false" prefHeight="90.0" prefWidth="169.0" promptText="Status" />
       <HBox>
          <children>

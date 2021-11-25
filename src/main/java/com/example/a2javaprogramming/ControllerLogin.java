@@ -5,11 +5,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.io.FileInputStream;
 import java.sql.*;
+import java.util.Random;
 
 public class ControllerLogin {
 
@@ -57,11 +61,11 @@ public class ControllerLogin {
             String pass = password.getText();
             String fName = "";
             String lName = "";
+            String profilePicture = "";
 
             Connection conn = getConnection();
             //Following code creates a new user. If the user already exists, it shows an error
             try{
-                //creates account only if username is unique.
                 String sql = "SELECT * FROM Users WHERE  username = ? AND password = ?";
                 PreparedStatement pstmt = conn.prepareStatement(sql);
                 pstmt.setString(1, uName);
@@ -74,12 +78,14 @@ public class ControllerLogin {
                 if (account.next() == true){
                     fName = account.getString("firstName");
                     lName = account.getString("lastName");
+                    profilePicture = account.getString(("profilePicture"));
 
                     //Sets properties of the logged-in user
                     KanbanLauncher.loggedUser.setFirstName(fName);
                     KanbanLauncher.loggedUser.setLastName(lName);
                     KanbanLauncher.loggedUser.setUsername(uName);
                     KanbanLauncher.loggedUser.setPassword(pass);
+                    KanbanLauncher.loggedUser.setProfilePicture(profilePicture);
 
                     statusArea.setText("Login Successful");
                     statusArea.setWrapText(true);
@@ -91,9 +97,22 @@ public class ControllerLogin {
 
                     VBox topBarContainer = (VBox) KanbanLauncher.workspaceBorderPane.getTop();
                     HBox topBar = (HBox) topBarContainer.getChildren().get(1);
+
+                    //Generating Quotes
+                    Random rand = new Random();
+                    TextArea quotesBar = (TextArea) topBar.getChildren().get(0);
+                    quotesBar.setText(KanbanLauncher.Quotes.get(rand.nextInt(5)));
+
                     HBox infoBar = (HBox) topBar.getChildren().get(1);
                     Label firstName = (Label) infoBar.getChildren().get(1);
                     firstName.setText(KanbanLauncher.loggedUser.getFirstName());
+
+                    if (!KanbanLauncher.loggedUser.getProfilePicture().isEmpty()){
+                        ImageView profilePictureImage = (ImageView) infoBar.getChildren().get(0);
+                        FileInputStream imageInput = new FileInputStream(KanbanLauncher.loggedUser.getProfilePicture());
+                        Image image = new Image(imageInput);
+                        profilePictureImage.setImage(image);
+                    }
 
                     TabPane tabPane = (TabPane)KanbanLauncher.workspaceBorderPane.getCenter();
 
@@ -214,7 +233,7 @@ public class ControllerLogin {
     void onSignUp(ActionEvent event) {
         try{
             FXMLLoader fxmlLoader = new FXMLLoader(KanbanLauncher.class.getResource("user-registration-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 225, 480);
+            Scene scene = new Scene(fxmlLoader.load(), 225, 760);
             // get a handle to the stage
             Stage stage = (Stage) signUp.getScene().getWindow();
             // do what you have to do

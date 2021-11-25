@@ -8,6 +8,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.QuadCurveTo;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -39,8 +40,22 @@ public class KanbanLauncher extends Application {
     //Work Space
     public static BorderPane workspaceBorderPane = null;
     public static StackPane workspaceStackPane = null;
+
+    //Quotes
+    public static LinkedList<String> Quotes = new LinkedList<String>();
     @Override
     public void start(Stage stage) throws IOException {
+        Quotes.add("“Don't be pushed around by the fears in your mind. Be led by the dreams in your heart.”\n" +
+                "― Roy T. Bennett");
+        Quotes.add("“There are only two ways to live your life. One is as though nothing is a miracle. The other is as though everything is a miracle.”\n" +
+                "― Albert Einstein");
+        Quotes.add("“I have not failed. I've just found 10,000 ways that won't work.”\n" +
+                "― Thomas A. Edison");
+        Quotes.add("“Everything you can imagine is real.”\n" +
+                "― Pablo Picasso");
+        Quotes.add("“And, when you want something, all the universe conspires in helping you to achieve it.”\n" +
+                "― Paulo Coelho, The Alchemist");
+
         FXMLLoader fxmlLoader = new FXMLLoader(KanbanLauncher.class.getResource("user-login-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 225, 480);
         stage.setTitle("Login");
