@@ -52,6 +52,9 @@ public class ControllerWorkspace {
     private MenuItem renameProject;
 
     @FXML
+    private MenuItem makeDefault;
+
+    @FXML
     private Label userFirstName;
 
     @FXML
@@ -138,13 +141,6 @@ public class ControllerWorkspace {
     @FXML
     void onLogOut(ActionEvent event){
         try{
-            KanbanLauncher.currentProject = null;
-            KanbanLauncher.currentTask = null;
-            KanbanLauncher.currentColumn = null;
-            KanbanLauncher.loggedUser = null;
-            KanbanLauncher.Projects.clear();
-            KanbanLauncher.Columns.clear();
-            KanbanLauncher.Tasks.clear();
 
             FXMLLoader fxmlLoader = new FXMLLoader(KanbanLauncher.class.getResource("user-login-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 225, 480);
@@ -152,10 +148,12 @@ public class ControllerWorkspace {
             stage.setTitle("Login");
             stage.setScene(scene);
             stage.show();
+
         }catch (Exception e){
             projectStatusArea.setText(e.getMessage());
         }
     }
+
     @FXML
     void onRenameProject(ActionEvent event) {
         try {
@@ -172,6 +170,44 @@ public class ControllerWorkspace {
         catch (Exception e){
             TextArea statusAreaMain = (TextArea) KanbanLauncher.workspaceBorderPane.getBottom();
             statusAreaMain.setText(e.getMessage());
+        }
+    }
+
+    @FXML
+    void onMakeDefault(ActionEvent event){
+        if (!workspaceTabArea.getTabs().isEmpty()) {
+            Connection conn = getConnection();
+            try{
+                //Removed Current Default
+                String sql = "SELECT * FROM Projects WHERE defaultProject = 1 AND username = ?";
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, KanbanLauncher.loggedUser.getUsername());
+                ResultSet result = pstmt.executeQuery();
+                if (result.next()){
+                    sql = "UPDATE Projects SET defaultProject = 0 WHERE defaultProject = 1 AND username = ?";
+                    pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, KanbanLauncher.loggedUser.getUsername());
+                    pstmt.executeUpdate();
+                }
+
+                TabPane projects = (TabPane) KanbanLauncher.workspaceBorderPane.getCenter();
+                String currentProject = projects.getSelectionModel().getSelectedItem().getId();
+                System.out.println(currentProject);
+
+                //Sets new Default
+                sql = "UPDATE Projects SET defaultProject = 1 WHERE projectId = ?";
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setInt(1, Integer.parseInt(currentProject));
+                pstmt.executeUpdate();
+
+                conn.close();
+
+            }  catch (Exception e){
+                projectStatusArea.setVisible(true);
+                projectStatusArea.setText(e.getMessage());
+                projectStatusArea.setWrapText(true);
+                projectStatusArea.setBackground(new Background(new BackgroundFill(Color.RED,null,null)));
+            }
         }
     }
 
@@ -320,7 +356,7 @@ public class ControllerWorkspace {
 
     @FXML
     void onCreateProject(ActionEvent event) {
-        if (projectName.getText().isEmpty()){
+        if (!(projectName.getText().isEmpty())){
             Connection conn = getConnection();
             //Following code creates adds a new project to DB. Displays the errors in the status area
             try{

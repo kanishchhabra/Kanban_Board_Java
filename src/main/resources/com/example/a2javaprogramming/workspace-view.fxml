@@ -34,6 +34,7 @@
                               <MenuItem fx:id="newColumn" mnemonicParsing="false" onAction="#onNewColumn" text="New Column" />
                               <MenuItem fx:id="deleteProject" mnemonicParsing="false" onAction="#onDeleteProject" text="Delete Project" />
                               <MenuItem fx:id="renameProject" mnemonicParsing="false" onAction="#onRenameProject" text="Rename Project" />
+                              <MenuItem fx:id="makeDefault" mnemonicParsing="false" onAction="#onMakeDefault" text="Make Default" />
                            </items>
                         </Menu>
                      </menus>

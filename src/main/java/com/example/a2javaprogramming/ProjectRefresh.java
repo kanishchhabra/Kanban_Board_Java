@@ -42,7 +42,7 @@ public class ProjectRefresh {
                 TabPane tabPane = (TabPane)KanbanLauncher.workspaceBorderPane.getCenter();
                 tabPane.getTabs().clear();
 
-                sql = "SELECT * FROM Projects WHERE  username = ?";
+                sql = "SELECT * FROM Projects WHERE username = ? ORDER BY defaultProject DESC";
                 pstmt = conn.prepareStatement(sql);
                 pstmt.setString(1, uName);
                 ResultSet projects = pstmt.executeQuery();

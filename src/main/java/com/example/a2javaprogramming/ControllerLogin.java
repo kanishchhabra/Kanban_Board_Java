@@ -116,12 +116,13 @@ public class ControllerLogin {
 
                     TabPane tabPane = (TabPane)KanbanLauncher.workspaceBorderPane.getCenter();
 
-                    sql = "SELECT * FROM Projects WHERE  username = ?";
+                    sql = "SELECT * FROM Projects WHERE username = ? ORDER BY defaultProject DESC";
                     pstmt = conn.prepareStatement(sql);
                     pstmt.setString(1, uName);
                     ResultSet projects = pstmt.executeQuery();
 
                     //Iterating over projects to add new projects
+                    KanbanLauncher.Projects.clear();
                     while (projects.next()){
                         Tab newProject = FXMLLoader.load(getClass().getResource("project-view.fxml"));
                         newProject.setId(String.valueOf(projects.getInt("projectId")));
@@ -135,6 +136,7 @@ public class ControllerLogin {
                         pstmt.setInt(1, projects.getInt("projectId"));
                         ResultSet columns = pstmt.executeQuery();
 
+                        KanbanLauncher.Columns.clear();
                         //Iterating over Columns to add new Columns
                         while (columns.next()){
                             VBox newColumn = FXMLLoader.load(getClass().getResource("column-view.fxml"));
@@ -148,6 +150,7 @@ public class ControllerLogin {
                             //Adding column on the GUI
                             projectColumns.getChildren().add(newColumn);
 
+                            KanbanLauncher.Tasks.clear();
                             //Iterating Over Tasks to set Tasks
                             VBox columnTasks = (VBox) newColumn.getChildren().get(1);
                             sql = "SELECT * FROM Tasks WHERE  columnId = ?";
